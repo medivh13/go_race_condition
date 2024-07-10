@@ -54,4 +54,4 @@ The server will run on port 8080.
     ```
 
 # Race Condition Case
-clone the test repo "go_raca_condition_test" and run the program
+clone the test repo "go_race_condition_test" and run the program
