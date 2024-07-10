@@ -1,41 +1,56 @@
 package usecase
 
 import (
-    "go_race_condition/src/repository"
-    "sync"
+	"go_race_condition/src/repository"
+	"sync"
 )
 
+// ProductUsecase is an interface defining methods for managing product operations.
 type ProductUsecase interface {
-    GetStock() int
-    UpdateStockWithWaitGroup(amount int)
-    UpdateStockWithMutex(amount int)
+	GetStock() int
+	UpdateStockWithWaitGroup(amount int)
+	UpdateStockWithMutex(amount int)
 }
 
 type productUsecase struct {
-    productRepo repository.ProductRepository
-    mu          sync.Mutex
+	productRepo repository.ProductRepository
+	mu          sync.Mutex
 }
 
+// NewProductUsecase creates a new instance of ProductUsecase with the provided ProductRepository.
 func NewProductUsecase(productRepo repository.ProductRepository) ProductUsecase {
-    return &productUsecase{productRepo: productRepo}
+	return &productUsecase{productRepo: productRepo}
 }
 
+// GetStock retrieves the current stock count from the repository.
 func (uc *productUsecase) GetStock() int {
-    return uc.productRepo.GetStock()
+	return uc.productRepo.GetStock()
 }
 
+// UpdateStockWithWaitGroup updates the stock using WaitGroup to handle concurrency.
+// It creates a WaitGroup to coordinate the concurrent update operation.
+// A goroutine is spawned to execute the repository's UpdateStock method asynchronously.
+// WaitGroup ensures that the main routine waits until the goroutine finishes its execution.
 func (uc *productUsecase) UpdateStockWithWaitGroup(amount int) {
-    var wg sync.WaitGroup
-    wg.Add(1)
-    go func() {
-        defer wg.Done()
-        uc.productRepo.UpdateStock(amount)
-    }()
-    wg.Wait()
+	var wg sync.WaitGroup
+	wg.Add(1) // Increment the WaitGroup counter by 1
+	// Incrementing the WaitGroup counter by 1 (wg.Add(1)) 
+	// means adding the number of goroutines that will be executed 
+	// concurrently by the WaitGroup. This approach allows us to inform the WaitGroup of how many 
+	// goroutines need to run concurrently before continuing the main process.
+	go func() {
+		defer wg.Done() // Decrement the WaitGroup counter when the goroutine completes
+		uc.productRepo.UpdateStock(amount) // Execute the repository's UpdateStock method
+	}()
+	wg.Wait() // Wait for all goroutines in the WaitGroup to finish
 }
 
+// UpdateStockWithMutex updates the stock using a Mutex to handle concurrency.
+// It locks a Mutex to ensure exclusive access to the shared resource (stock).
+// After updating the stock, it unlocks the Mutex to allow other goroutines to access it.
 func (uc *productUsecase) UpdateStockWithMutex(amount int) {
-    uc.mu.Lock()
-    defer uc.mu.Unlock()
-    uc.productRepo.UpdateStock(amount)
+	uc.mu.Lock() // Acquire the lock of the Mutex
+	defer uc.mu.Unlock() // Ensure the Mutex is unlocked when the function exits
+	uc.productRepo.UpdateStock(amount) // Execute the repository's UpdateStock method under Mutex lock
 }
+

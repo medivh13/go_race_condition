@@ -34,7 +34,7 @@ The server will run on port 8080.
     Example:
 
     ```sh
-    curl http://localhost:8080/get-stock
+    curl http://localhost:8080/stock
     ```
 
 - **POST /update-stock-wg:** Updates the stock using WaitGroup (prone to race conditions).
