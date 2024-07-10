@@ -52,3 +52,6 @@ The server will run on port 8080.
     ```sh
     curl -X POST http://localhost:8080/update-stock-mutex
     ```
+
+# Race Condition Case
+clone the test repo "go_raca_condition_test" and run the program
