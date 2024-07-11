@@ -17,6 +17,7 @@ This project demonstrates the use of concurrency in Go, specifically showcasing 
 
     ```sh
     cd go_race_condition
+    and then do go mod tidy
     ```
 
 3. **Run the server:**

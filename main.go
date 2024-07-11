@@ -12,7 +12,7 @@ import (
 
 func main() {
 	// Initialize the application by creating instances of repository, usecase, handler, and router.
-	// The product repository is initialized with an initial stock of 100,000.
+	// The product repository is initialized with an initial stock of 100000.
 	productRepo := repo.NewProductRepository(100000)
 	productUsecase := usecases.NewProductUsecase(productRepo)
 	handler := handlers.NewHandler(productUsecase)
